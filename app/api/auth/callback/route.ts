@@ -30,7 +30,9 @@ export async function GET(request: Request) {
     }
 
     const shopId = "101063885166";
-    const clientId = "377b775c-ee57-422d-8b0f-124080a5d2b8";
+    const clientId = "877bf73e-ee37-421d-9b6f-128090a5d2b0";
+
+
 
     const tokenUrl = `https://shopify.com/authentication/${shopId}/oauth/token`;
 
