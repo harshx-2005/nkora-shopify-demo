@@ -197,6 +197,7 @@ export default function Navbar() {
               onClick={() => setSearchOpen(true)}
               className="p-2 text-textDark hover:text-primary transition-colors duration-200"
               aria-label="Search"
+              suppressHydrationWarning
             >
               <Search size={18} />
             </button>
@@ -206,6 +207,7 @@ export default function Navbar() {
               href="/account"
               className="hidden sm:inline-block p-2 text-textDark hover:text-primary transition-colors duration-200"
               aria-label="Account"
+              suppressHydrationWarning
             >
               {isLoggedIn && customer ? (
                 <div className="w-5 h-5 rounded-full bg-softPink text-primary flex items-center justify-center font-bold text-[8px] border border-primary/20 shadow-xs hover:bg-primary hover:text-white transition-all duration-300">
@@ -222,6 +224,7 @@ export default function Navbar() {
               href="/wishlist"
               className="hidden sm:inline-block p-2 text-textDark hover:text-primary transition-colors duration-200"
               aria-label="Wishlist"
+              suppressHydrationWarning
             >
               <Heart size={18} />
             </Link>
@@ -231,6 +234,7 @@ export default function Navbar() {
               onClick={openCart}
               className="p-2 text-textDark hover:text-primary transition-colors duration-200 relative"
               aria-label="Cart"
+              suppressHydrationWarning
             >
               <ShoppingBag size={18} />
               {totalQuantity > 0 && (
@@ -243,6 +247,7 @@ export default function Navbar() {
                 </motion.span>
               )}
             </button>
+
 
             {/* Mobile Hamburger Menu Toggle */}
             <button
