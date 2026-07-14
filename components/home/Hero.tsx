@@ -37,7 +37,7 @@ export default function Hero() {
       {/* Landscape Banner Background Image */}
       <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
         <Image
-          src="/hero-banner-far-right.png"
+          src="/hero-banner-unified.png"
           alt="Premium Kidswear Banner"
           fill
           priority
@@ -45,6 +45,7 @@ export default function Hero() {
           className="object-cover object-center lg:object-right"
         />
         {/* Trigger Vercel rebuild for dev-mode banner layout */}
+
 
 
 
