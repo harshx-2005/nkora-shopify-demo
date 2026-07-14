@@ -5,6 +5,7 @@ import CategoryGrid from "@/components/home/CategoryGrid";
 import NewArrivals from "@/components/home/NewArrivals";
 import DiscountBanner from "@/components/home/DiscountBanner";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
+import CustomerReviews from "@/components/home/CustomerReviews";
 import InstagramGallery from "@/components/home/InstagramGallery";
 import Newsletter from "@/components/home/Newsletter";
 import { getProducts } from "@/lib/shopify/client";
@@ -48,11 +49,15 @@ export default async function HomePage() {
       {/* 6. Why Choose Us (Why Parents Love Us) */}
       <WhyChooseUs />
 
-      {/* 7. Social Instagram grid */}
+      {/* 7. Parent Testimonials Carousel */}
+      <CustomerReviews />
+
+      {/* 8. Social Instagram grid */}
       <InstagramGallery />
 
-      {/* 8. Newsletter subscription Form */}
+      {/* 9. Newsletter subscription Form */}
       <Newsletter />
     </div>
   );
 }
+

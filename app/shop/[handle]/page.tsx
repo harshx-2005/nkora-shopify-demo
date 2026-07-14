@@ -5,7 +5,11 @@ import { getProductByHandle, getProducts } from "@/lib/shopify/client";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import ProductAccordion from "@/components/product/ProductAccordion";
+import ProductReviews from "@/components/product/ProductReviews";
+import { ShopifyProduct } from "@/types/shopify";
 import { Metadata } from "next";
+
+
 
 interface ProductPageProps {
   params: Promise<{ handle: string }>;
@@ -58,12 +62,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
     .map((e) => e.node)
     .filter((img) => img && typeof img.url === "string" && img.url.trim() !== "");
 
+  // Fetch related products (e.g. same productType or first 4 fallbacks)
+  let relatedProducts: ShopifyProduct[] = [];
+  try {
+    const allProducts = await getProducts();
+    relatedProducts = allProducts
+      .filter((p) => p.id !== product.id && p.productType === product.productType)
+      .slice(0, 4);
+    
+    if (relatedProducts.length === 0) {
+      relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 4);
+    }
+  } catch (error) {
+    console.error("Failed to load related products:", error);
+  }
 
   return (
     <div className="bg-white min-h-screen py-6 md:py-10 px-4 md:px-10 font-poppins">
-      <div className="max-w-site mx-auto">
+      <div className="max-w-site mx-auto space-y-16">
         {/* Breadcrumb Section */}
-        <nav className="text-[11px] font-sans font-semibold tracking-wider text-textDark/40 uppercase mb-8 flex items-center space-x-1.5 overflow-x-auto whitespace-nowrap pb-2 md:pb-0">
+        <nav className="text-[11px] font-sans font-semibold tracking-wider text-textDark/40 uppercase mb-0 flex items-center space-x-1.5 overflow-x-auto whitespace-nowrap pb-2 md:pb-0 select-none">
           <Link href="/" className="hover:text-primary transition-colors">
             Home
           </Link>
@@ -102,10 +120,61 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Column 3: Bullet points, wash guidelines, and returns */}
           <div className="lg:col-span-1">
-            <ProductAccordion descriptionHtml={product.descriptionHtml} />
+            <ProductAccordion descriptionHtml={product.descriptionHtml} product={product} />
           </div>
         </div>
+
+        {/* Customer Reviews Section */}
+        <ProductReviews />
+
+        {/* Related Products Section */}
+        {relatedProducts.length > 0 && (
+          <div className="border-t border-borderCustom pt-16 font-poppins text-left">
+            <h3 className="text-sm font-bold text-textDark tracking-wider uppercase mb-8">
+              You May Also Like
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {relatedProducts.map((rel) => {
+                const relImage = rel.images.edges[0]?.node?.url || "https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&q=80&w=400";
+                const price = rel.priceRange.minVariantPrice.amount;
+                return (
+                  <Link
+                    key={rel.id}
+                    href={`/shop/${rel.handle}`}
+                    className="group flex flex-col space-y-3 cursor-pointer"
+                  >
+                    <div className="relative aspect-3/4 w-full rounded-2xl overflow-hidden bg-lightGray">
+                      <img
+                        src={relImage}
+                        alt={rel.title}
+                        className="object-cover object-top w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                      {rel.compareAtPriceRange?.minVariantPrice?.amount && 
+                       parseFloat(rel.compareAtPriceRange.minVariantPrice.amount) > parseFloat(price) && (
+                        <span className="absolute top-3 left-3 bg-primary text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                          Sale
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[9px] uppercase tracking-wider text-textDark/40 font-bold font-poppins block">
+                        {rel.productType}
+                      </span>
+                      <h4 className="text-xs font-bold text-textDark truncate group-hover:text-primary transition-colors font-poppins">
+                        {rel.title}
+                      </h4>
+                      <span className="text-xs text-primary font-bold font-mono">
+                        ₹{parseFloat(price).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+

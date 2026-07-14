@@ -83,6 +83,7 @@ export default function NewArrivals({ products }: NewArrivalsProps) {
               onClick={scrollPrev}
               className="p-2.5 rounded-full border border-borderCustom hover:bg-softPink/50 transition-colors"
               aria-label="Previous Arrivals"
+              suppressHydrationWarning
             >
               <ChevronLeft size={16} />
             </button>
@@ -90,9 +91,11 @@ export default function NewArrivals({ products }: NewArrivalsProps) {
               onClick={scrollNext}
               className="p-2.5 rounded-full border border-borderCustom hover:bg-softPink/50 transition-colors"
               aria-label="Next Arrivals"
+              suppressHydrationWarning
             >
               <ChevronRight size={16} />
             </button>
+
           </div>
         </div>
 

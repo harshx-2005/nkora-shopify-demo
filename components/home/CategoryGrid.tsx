@@ -8,10 +8,16 @@ import { motion } from "framer-motion";
 export default function CategoryGrid() {
   const categories = [
     {
+      name: "Newborn",
+      href: "/shop?collection=newborn",
+      image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=600",
+      color: "bg-[#FEF9E7]", // soft warm cream/yellow
+    },
+    {
       name: "Girls Collection",
       href: "/shop?collection=girls",
       image: "https://images.unsplash.com/photo-1595853035070-59a39fe84de3?auto=format&fit=crop&q=80&w=600",
-      color: "bg-[#FEF9E7]", // soft warm cream/yellow
+      color: "bg-[#FDEDEC]", // soft pinkish cream
     },
     {
       name: "Boys Collection",
@@ -20,16 +26,29 @@ export default function CategoryGrid() {
       color: "bg-[#EBF5FB]", // soft light blue
     },
     {
+      name: "Indo-Western",
+      href: "/shop?collection=indo-western",
+      image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&q=80&w=600",
+      color: "bg-[#FEF5E7]", // soft warm peach
+    },
+
+    {
       name: "Party Wear",
       href: "/shop?collection=party-wear",
       image: "https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&q=80&w=600",
-      color: "bg-[#FDEDEC]", // soft pinkish cream
+      color: "bg-[#F4ECF7]", // soft lilac/purple cream
+    },
+    {
+      name: "School Essentials",
+      href: "/shop?collection=school-essentials",
+      image: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&q=80&w=600",
+      color: "bg-[#EAECEE]", // soft slate/grey
     },
     {
       name: "Accessories",
       href: "/shop?collection=accessories",
       image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=600",
-      color: "bg-[#F4ECF7]", // soft lilac/purple cream
+      color: "bg-[#E8F8F5]", // soft mint/teal
     },
   ];
 
@@ -50,6 +69,8 @@ export default function CategoryGrid() {
 
         {/* Responsive Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+
           {categories.map((cat, idx) => (
             <motion.div
               key={cat.name}

@@ -41,6 +41,8 @@ export default function Footer() {
               K I D S W E A R
             </span>
           </Link>
+
+
           <p className="text-xs text-textDark/60 leading-relaxed font-sans">
             Luxury kidswear boutique designed to deliver maximum skin-friendly comfort without compromising on modern, dapper styling.
           </p>

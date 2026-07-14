@@ -26,10 +26,11 @@ export default function WhyChooseUs() {
 
   const kidsPortraits = [
     "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&q=80&w=300",
-    "https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&q=80&w=300",
+    "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&q=80&w=300",
     "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&q=80&w=300",
-    "https://images.unsplash.com/photo-1595853035070-59a39fe84de3?auto=format&fit=crop&q=80&w=300",
+    "https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&q=80&w=300",
   ];
+
 
   return (
     <section className="bg-white py-16 px-4 md:px-10 border-b border-borderCustom font-poppins">
@@ -37,17 +38,17 @@ export default function WhyChooseUs() {
         {/* Left Side Info */}
         <div className="lg:col-span-6 space-y-8">
           <div>
-            <h2 className="text-2xl font-light tracking-[0.2em] text-textDark uppercase">
+            <h2 className="text-3xl font-light tracking-[0.15em] text-textDark uppercase">
               Why Parents Love NKORA
             </h2>
-            <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2 mt-3">
               <div className="h-[1px] w-8 bg-borderCustom" />
               <span className="text-primary text-xs">♡</span>
               <div className="h-[1px] w-8 bg-borderCustom" />
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-7">
             {points.map((pt, idx) => {
               const Icon = pt.icon;
               return (
@@ -59,14 +60,14 @@ export default function WhyChooseUs() {
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.15, duration: 0.6 }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-softPink/50 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-                    <Icon size={16} />
+                  <div className="w-12 h-12 rounded-full bg-softPink/50 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                    <Icon size={18} />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-textDark tracking-wider uppercase font-poppins">
+                    <h3 className="text-sm font-bold text-textDark tracking-wider uppercase font-poppins">
                       {pt.title}
                     </h3>
-                    <p className="text-[11px] md:text-xs text-textDark/60 font-sans mt-0.5 leading-relaxed">
+                    <p className="text-xs md:text-sm text-textDark/60 font-sans mt-1 leading-relaxed">
                       {pt.desc}
                     </p>
                   </div>
@@ -76,16 +77,16 @@ export default function WhyChooseUs() {
           </div>
         </div>
 
-        {/* Right Side Portrait Circles */}
+        {/* Right Side Portrait Rectangles with Soft Rounded Corners */}
         <div className="lg:col-span-6 flex justify-center lg:justify-end">
           <div className="flex items-center gap-3 md:gap-4">
             {kidsPortraits.map((src, idx) => (
               <motion.div
                 key={idx}
-                className={`relative overflow-hidden shadow-sm border border-borderCustom ${
+                className={`relative overflow-hidden shadow-md border border-borderCustom transition-transform duration-300 ${
                   idx % 2 === 0
-                    ? "w-20 h-32 md:w-24 md:h-36 rounded-full"
-                    : "w-20 h-28 md:w-24 md:h-32 rounded-full mt-8"
+                    ? "w-24 h-36 md:w-28 md:h-44 rounded-[2rem]"
+                    : "w-24 h-32 md:w-28 md:h-38 rounded-[2rem] mt-8"
                 }`}
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -98,7 +99,7 @@ export default function WhyChooseUs() {
                   alt={`NKORA Happy Child Portrait ${idx + 1}`}
                   fill
                   sizes="150px"
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
               </motion.div>
             ))}
@@ -108,3 +109,4 @@ export default function WhyChooseUs() {
     </section>
   );
 }
+

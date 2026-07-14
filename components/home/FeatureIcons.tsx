@@ -1,46 +1,53 @@
 "use client";
 
 import React from "react";
-import { Award, ShieldCheck, Truck, RefreshCw, LucideIcon } from "lucide-react";
+import { Award, ShieldCheck, Truck, RefreshCw, Banknote, LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 
 export default function FeatureIcons() {
   const features = [
     {
-      icon: Award,
-      title: "Premium Quality",
-      desc: "Carefully selected fabrics",
-      color: "bg-softPink/30 hover:bg-softPink/60 text-primary",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Safe for Kids",
-      desc: "Skin-friendly materials",
-      color: "bg-blueAccent/10 hover:bg-blueAccent/20 text-blueAccent",
-    },
-    {
-      icon: Truck,
-      title: "Fast Delivery",
-      desc: "Pan India delivery",
+      icon: Banknote,
+      title: "COD Available",
+      desc: "Pay on delivery",
       color: "bg-softPink/30 hover:bg-softPink/60 text-primary",
     },
     {
       icon: RefreshCw,
-      title: "Easy Exchange",
-      desc: "Hassle free returns",
+      title: "Easy Returns",
+      desc: "7-Day hassle-free return",
       color: "bg-blueAccent/10 hover:bg-blueAccent/20 text-blueAccent",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Secure Payments",
+      desc: "100% Protected checkout",
+      color: "bg-softPink/30 hover:bg-softPink/60 text-primary",
+    },
+    {
+      icon: Award,
+      title: "Quality Assurance",
+      desc: "Premium skin-safe fabrics",
+      color: "bg-blueAccent/10 hover:bg-blueAccent/20 text-blueAccent",
+    },
+    {
+      icon: Truck,
+      title: "Fast Shipping",
+      desc: "Free on orders above ₹1999",
+      color: "bg-softPink/30 hover:bg-softPink/60 text-primary",
     },
   ];
 
   return (
     <section className="bg-white py-12 px-4 md:px-10 border-b border-borderCustom">
-      <div className="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
         {announcementCards(features)}
       </div>
     </section>
   );
 }
+
 
 function announcementCards(
   items: { icon: LucideIcon; title: string; desc: string; color: string }[]

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Star, ShoppingBag, CreditCard, MessageCircle, Truck, RefreshCw, ShieldCheck } from "lucide-react";
+
+import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { ShopifyProduct, ProductVariant } from "@/types/shopify";
 import { formatPrice } from "@/lib/utils";
@@ -24,6 +26,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>(initialOptions);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
+
+  // Sizing chart & pincode states
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [pincode, setPincode] = useState("");
+  const [pincodeResult, setPincodeResult] = useState<{ checked: boolean; success: boolean; dateString?: string; expressDateString?: string; message?: string } | null>(null);
+
 
   // Match selected options to variants
   useEffect(() => {
@@ -103,6 +111,34 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     window.open(`https://wa.me/919876543210?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const handlePincodeCheck = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^\d{6}$/.test(pincode)) {
+      setPincodeResult({
+        checked: true,
+        success: false,
+        message: "Please enter a valid 6-digit Pincode.",
+      });
+      return;
+    }
+
+    const options: Intl.DateTimeFormatOptions = { weekday: "long", month: "short", day: "numeric" };
+    const today = new Date();
+    
+    const standardDate = new Date(today);
+    standardDate.setDate(today.getDate() + 5);
+    
+    const expressDate = new Date(today);
+    expressDate.setDate(today.getDate() + 3);
+
+    setPincodeResult({
+      checked: true,
+      success: true,
+      dateString: standardDate.toLocaleDateString("en-IN", options),
+      expressDateString: expressDate.toLocaleDateString("en-IN", options),
+    });
+  };
+
   return (
     <div className="space-y-6 font-poppins">
       {/* Title & Tag */}
@@ -122,9 +158,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             <Star key={i} size={13} className="fill-amber-400 stroke-amber-400" />
           ))}
         </div>
-        <span className="text-xs font-semibold text-textDark/80">5.0</span>
-        <span className="text-xs text-textDark/40 font-sans font-medium hover:underline cursor-pointer">
-          (25 Customer Reviews)
+        <span className="text-[11px] font-sans font-bold text-textDark/80">
+          5.0
+        </span>
+        <span className="text-[10px] text-textDark/40">
+          (25 Reviews)
         </span>
       </div>
 
@@ -152,10 +190,14 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                 Select {option.name}:
               </span>
               {option.name.toLowerCase() === "size" && (
-                <button className="text-primary hover:text-primary-hover font-bold text-[10px] tracking-wider uppercase underline">
+                <button
+                  onClick={() => setIsSizeChartOpen(true)}
+                  className="text-primary hover:text-primary-hover font-bold text-[10px] tracking-wider uppercase underline focus:outline-none"
+                >
                   SIZE CHART
                 </button>
               )}
+
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -258,6 +300,56 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <span>NEED HELP? CHAT ON WHATSAPP</span>
       </button>
 
+      {/* Pincode Estimator Section */}
+      <div className="bg-lightGray/40 border border-borderCustom rounded-3xl p-5 space-y-3 font-poppins">
+        <span className="text-[10px] font-bold text-textDark/60 uppercase tracking-widest block text-left">
+          Check Delivery Estimate
+        </span>
+        <form onSubmit={handlePincodeCheck} className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Enter 6-digit Pincode"
+            value={pincode}
+            onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            className="flex-grow bg-white border border-borderCustom px-4 py-2.5 rounded-xl text-xs font-mono text-textDark focus:outline-none focus:border-primary transition-colors text-left"
+          />
+          <button
+            type="submit"
+            className="bg-textDark hover:bg-black text-white text-[10px] tracking-wider font-bold uppercase px-4 py-2.5 rounded-xl transition-colors shrink-0"
+          >
+            Check
+          </button>
+        </form>
+
+        {pincodeResult && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`text-xs leading-normal font-sans p-3 rounded-xl border ${
+              pincodeResult.success
+                ? "bg-green-50/50 border-green-200/50 text-green-700"
+                : "bg-red-50/50 border-red-200/50 text-red-600"
+            }`}
+          >
+            {pincodeResult.success ? (
+              <div className="space-y-1">
+                <p className="font-semibold flex items-center gap-1.5 text-left text-green-700">
+                  <span>🚚</span> Fast Delivery Available!
+                </p>
+                <p className="text-[10px] text-green-800/80 leading-relaxed text-left">
+                  Standard delivery by <strong>{pincodeResult.dateString}</strong> (Free). <br />
+                  Express delivery by <strong>{pincodeResult.expressDateString}</strong>. <br />
+                  Cash on Delivery (COD) is available for this location.
+                </p>
+              </div>
+            ) : (
+              <p className="text-[10px] font-semibold flex items-center gap-1 text-left">
+                <span>⚠️</span> {pincodeResult.message}
+              </p>
+            )}
+          </motion.div>
+        )}
+      </div>
 
       {/* Trust Badges */}
       <div className="border-t border-borderCustom pt-6 grid grid-cols-3 gap-2 text-center">
@@ -286,6 +378,120 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </span>
         </div>
       </div>
+
+      {/* Sizing Chart Modal */}
+      <AnimatePresence>
+        {isSizeChartOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Overlay */}
+            <motion.div
+              className="absolute inset-0 bg-black/40 backdrop-blur-xs"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSizeChartOpen(false)}
+            />
+            {/* Modal Box */}
+            <motion.div
+              className="bg-white rounded-[32px] border border-borderCustom w-full max-w-lg overflow-hidden shadow-2xl z-10 relative flex flex-col max-h-[90vh]"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: "spring", duration: 0.5 }}
+            >
+              {/* Header */}
+              <div className="p-6 md:p-8 pb-4 border-b border-borderCustom flex justify-between items-center bg-softPink/10">
+                <div className="text-left">
+                  <h3 className="text-base font-bold text-textDark font-poppins tracking-wider uppercase">
+                    NKORA Sizing Guide
+                  </h3>
+                  <p className="text-[10px] text-textDark/50 mt-0.5">
+                    Premium kidswear fits for Newborn to 12 Years
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsSizeChartOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white border border-borderCustom text-textDark/60 hover:text-textDark flex items-center justify-center hover:shadow-xs transition-all duration-300"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Chart Content */}
+              <div className="p-6 md:p-8 overflow-y-auto space-y-6">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="border-b border-borderCustom text-[10px] tracking-wider uppercase font-bold text-textDark/50">
+                      <th className="py-2.5">Age Bracket</th>
+                      <th className="py-2.5">Height (cm)</th>
+                      <th className="py-2.5">Chest (cm)</th>
+                      <th className="py-2.5">Waist (cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-borderCustom text-textDark/70">
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">Newborn (0-3M)</td>
+                      <td className="py-2.5 font-mono">50 - 62</td>
+                      <td className="py-2.5 font-mono">40 - 43</td>
+                      <td className="py-2.5 font-mono">38 - 41</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">3 - 12 Months</td>
+                      <td className="py-2.5 font-mono">62 - 80</td>
+                      <td className="py-2.5 font-mono">43 - 48</td>
+                      <td className="py-2.5 font-mono">41 - 46</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">1 - 2 Years</td>
+                      <td className="py-2.5 font-mono">80 - 92</td>
+                      <td className="py-2.5 font-mono">48 - 52</td>
+                      <td className="py-2.5 font-mono">46 - 50</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">3 - 4 Years</td>
+                      <td className="py-2.5 font-mono">92 - 104</td>
+                      <td className="py-2.5 font-mono">52 - 56</td>
+                      <td className="py-2.5 font-mono">50 - 53</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">5 - 6 Years</td>
+                      <td className="py-2.5 font-mono">104 - 116</td>
+                      <td className="py-2.5 font-mono">56 - 60</td>
+                      <td className="py-2.5 font-mono">53 - 56</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">7 - 8 Years</td>
+                      <td className="py-2.5 font-mono">116 - 128</td>
+                      <td className="py-2.5 font-mono">60 - 64</td>
+                      <td className="py-2.5 font-mono">56 - 59</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">9 - 10 Years</td>
+                      <td className="py-2.5 font-mono">128 - 140</td>
+                      <td className="py-2.5 font-mono">64 - 70</td>
+                      <td className="py-2.5 font-mono">59 - 63</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 font-semibold text-textDark text-left">11 - 12 Years</td>
+                      <td className="py-2.5 font-mono">140 - 152</td>
+                      <td className="py-2.5 font-mono">70 - 76</td>
+                      <td className="py-2.5 font-mono">63 - 67</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                {/* Sizing Note */}
+                <div className="bg-softPink/25 border border-primary/10 rounded-2xl p-4 text-[10px] text-primary/95 leading-relaxed font-sans flex items-start space-x-2">
+                  <span className="text-xs">💡</span>
+                  <p className="text-left">
+                    <strong>Sizing Tip:</strong> If your child is between sizes, we always recommend ordering one size larger to accommodate growth and ensure absolute comfort.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

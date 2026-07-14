@@ -288,12 +288,13 @@ export const MOCK_PRODUCTS: ShopifyProduct[] = [
       edges: [
         {
           node: {
-            url: "https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?auto=format&fit=crop&q=80&w=800",
+            url: "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&q=80&w=800",
             altText: "Bow Tie Suspender Set",
             width: 800,
             height: 1000
           }
         }
+
       ]
     },
     options: [
@@ -452,6 +453,7 @@ export async function shopifyFetch<T>({
   }
 
   try {
+    const isDev = process.env.NODE_ENV === "development";
     const result = await fetch(endpoint, {
       method: "POST",
       headers: {
@@ -459,9 +461,10 @@ export async function shopifyFetch<T>({
         "X-Shopify-Storefront-Access-Token": accessToken,
       },
       body: JSON.stringify({ query, variables }),
-      cache,
-      next: cache === "force-cache" ? { revalidate: 3600 } : undefined, // Cache for 1 hour
+      cache: isDev ? "no-store" : cache,
+      next: isDev ? { revalidate: 0 } : (cache === "force-cache" ? { revalidate: 3600 } : undefined),
     });
+
 
     const body = await result.json();
 
@@ -485,17 +488,27 @@ export async function shopifyFetch<T>({
 export async function getProducts(query?: string): Promise<ShopifyProduct[]> {
   const response = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
     query: GET_PRODUCTS_QUERY,
-    variables: { first: 50, query },
+    variables: { first: 250, query },
   });
 
   const products = response?.body?.products?.edges.map(edge => edge.node) || [];
-  if (products.length === 0) {
-    console.log("No products returned from Shopify. Serving fallback Mock products.");
+  
+  // Filter out default Shopify sandbox snowboard seed products
+  const liveKidsProducts = products.filter(
+    (p) => 
+      !p.title.toLowerCase().includes("snowboard") && 
+      !p.title.toLowerCase().includes("ski wax") &&
+      p.vendor !== "Hydrogen" &&
+      p.handle !== "gift-card"
+  );
+
+  if (liveKidsProducts.length === 0) {
+    console.log("No kids products returned from Shopify. Serving fallback Mock products.");
     return query 
-      ? MOCK_PRODUCTS.filter(p => p.title.toLowerCase().includes(query.toLowerCase()) || p.tags.includes(query.toLowerCase()))
+      ? MOCK_PRODUCTS.filter(p => p.title.toLowerCase().includes(query.toLowerCase()) || p.tags.map(t => t.toLowerCase()).includes(query.toLowerCase()))
       : MOCK_PRODUCTS;
   }
-  return products;
+  return liveKidsProducts;
 }
 
 export async function getProductByHandle(handle: string): Promise<ShopifyProduct | null> {
@@ -534,11 +547,78 @@ export async function getCollectionProducts(handle: string): Promise<ShopifyColl
 
   const collection = response?.body?.collection || null;
   if (!collection || !collection.products?.edges || collection.products.edges.length === 0) {
-    console.log(`Collection "${handle}" empty or missing on Shopify. Serving mock collection.`);
+    console.log(`Collection "${handle}" empty or missing on Shopify. Checking live products by tag matching...`);
+    
+    const liveProducts = await getProducts();
+    const matchingLiveProducts = liveProducts.filter(p => {
+      const pTitle = p.title.toLowerCase();
+      const pTags = p.tags.map(t => t.toLowerCase());
+      const pType = p.productType ? p.productType.toLowerCase() : "";
+
+      // Match collection by explicit tags
+      if (pTags.includes(handle) || pType.includes(handle)) return true;
+
+      // Heuristic keyword matching for "boys"
+      if (handle === "boys") {
+        if (pTags.includes("boy") || pTags.includes("boys")) return true;
+        const boyKeywords = ["polo", "suit", "dungaree", "cargo", "shorts", "shirt", "jeans", "joggers", "fleece", "hoodie", "tracksuit", "sweatshirt", "cardigan"];
+        return boyKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      // Heuristic keyword matching for "girls"
+      if (handle === "girls") {
+        if (pTags.includes("girl") || pTags.includes("girls")) return true;
+        const girlKeywords = ["dress", "skirt", "frock", "tulle", "leggings"];
+        return girlKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      // Heuristic keyword matching for "newborn"
+      if (handle === "newborn") {
+        const babyKeywords = ["newborn", "onesie", "bodysuit", "romper", "baby", "infant", "toddler"];
+        return babyKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      // Heuristic keyword matching for "school-essentials"
+      if (handle === "school-essentials") {
+        const schoolKeywords = ["school", "uniform", "socks", "backpack"];
+        return schoolKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      // Heuristic keyword matching for "party-wear" or "indo-western"
+      if (handle === "party-wear" || handle === "indo-western") {
+        const partyKeywords = ["party", "dress", "ethnic", "kurta", "festive", "sherwani"];
+        return partyKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      // Heuristic keyword matching for "accessories"
+      if (handle === "accessories") {
+        const accKeywords = ["beanie", "cap", "accessories", "accessory", "socks"];
+        return accKeywords.some(keyword => pTitle.includes(keyword) || pType.includes(keyword) || pTags.includes(keyword));
+      }
+
+      return false;
+    });
+
+
+
+    if (matchingLiveProducts.length > 0) {
+      return {
+        id: `gid://shopify/Collection/fallback-${handle}`,
+        handle,
+        title: handle.charAt(0).toUpperCase() + handle.slice(1).replace("-", " "),
+        description: `Active products from tag: ${handle}`,
+        products: {
+          edges: matchingLiveProducts.map(p => ({ node: p }))
+        }
+      };
+    }
+
+    console.log(`No matching live products for tag "${handle}". Serving mock collection database.`);
     return MOCK_COLLECTIONS.find(c => c.handle === handle) || null;
   }
   return collection;
 }
+
 
 export async function searchProducts(query: string): Promise<ShopifyProduct[]> {
   const response = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({

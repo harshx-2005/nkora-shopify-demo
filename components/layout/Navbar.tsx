@@ -70,6 +70,8 @@ export default function Navbar() {
             </span>
           </Link>
 
+
+
           {/* Navigation Center (Desktop) */}
           <nav className="hidden lg:flex items-center space-x-6">
             {navLinks.map((link) => {
