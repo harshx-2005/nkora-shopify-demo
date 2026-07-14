@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Poppins, Nunito, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/hooks/useCart";
+import { CustomerProvider } from "@/context/CustomerContext";
 import TopBar from "@/components/layout/TopBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
 import Loader from "@/components/layout/Loader";
 import CartDrawer from "@/components/cart/CartDrawer";
+
 
 // Import Google fonts
 const poppins = Poppins({
@@ -65,30 +67,33 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${nunito.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <body className="antialiased">
 
-        <CartProvider>
-          {/* Custom Luxury Preloader */}
-          <Loader />
+        <CustomerProvider>
+          <CartProvider>
+            {/* Custom Luxury Preloader */}
+            <Loader />
 
-          {/* Interactive Custom Cursor */}
-          <CustomCursor />
+            {/* Interactive Custom Cursor */}
+            <CustomCursor />
 
-          <div className="flex flex-col min-h-screen">
-            {/* Promotional Top Header */}
-            <TopBar />
+            <div className="flex flex-col min-h-screen">
+              {/* Promotional Top Header */}
+              <TopBar />
 
-            {/* Main Interactive Header */}
-            <Navbar />
+              {/* Main Interactive Header */}
+              <Navbar />
 
-            {/* Main Page Layout Wrapper */}
-            <main className="flex-grow">{children}</main>
+              {/* Main Page Layout Wrapper */}
+              <main className="flex-grow">{children}</main>
 
-            {/* Static Multi-column Footer */}
-            <Footer />
-          </div>
+              {/* Static Multi-column Footer */}
+              <Footer />
+            </div>
 
-          {/* Animated Slide-out Cart Drawer */}
-          <CartDrawer />
-        </CartProvider>
+            {/* Animated Slide-out Cart Drawer */}
+            <CartDrawer />
+          </CartProvider>
+        </CustomerProvider>
+
       </body>
     </html>
   );

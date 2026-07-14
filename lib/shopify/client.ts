@@ -4,6 +4,7 @@ import {
   GET_COLLECTIONS_QUERY,
   GET_COLLECTION_PRODUCTS_QUERY,
   SEARCH_PRODUCTS_QUERY,
+  GET_CUSTOMER_QUERY,
 } from "./queries";
 import {
   CREATE_CART_MUTATION,
@@ -11,7 +12,11 @@ import {
   UPDATE_CART_LINES_MUTATION,
   REMOVE_CART_LINES_MUTATION,
   GET_CART_QUERY,
+  CUSTOMER_CREATE_MUTATION,
+  CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION,
+  CUSTOMER_ACCESS_TOKEN_DELETE_MUTATION,
 } from "./mutations";
+
 import { ShopifyProduct, ShopifyCollection, ShopifyCart } from "@/types/shopify";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN || "";
@@ -600,3 +605,146 @@ export async function removeFromCart(cartId: string, lineId: string): Promise<Sh
   });
   return response?.body?.cartLinesRemove?.cart || null;
 }
+
+export async function registerCustomer(input: any) {
+  const response = await shopifyFetch<{ customerCreate: { customer: any, customerUserErrors: any[] } }>({
+    query: CUSTOMER_CREATE_MUTATION,
+    variables: { input },
+    cache: "no-store",
+  });
+  
+  if (!response) {
+    console.log("Mocking registration for:", input.email);
+    return {
+      customer: {
+        id: "gid://shopify/Customer/mock-customer-id",
+        firstName: input.firstName,
+        lastName: input.lastName,
+        email: input.email,
+      },
+      customerUserErrors: [],
+    };
+  }
+  
+  return response?.body?.customerCreate || null;
+}
+
+export async function loginCustomer(input: any) {
+  const response = await shopifyFetch<{ customerAccessTokenCreate: { customerAccessToken: any, customerUserErrors: any[] } }>({
+    query: CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION,
+    variables: { input },
+    cache: "no-store",
+  });
+
+  if (!response) {
+    console.log("Mocking login for:", input.email);
+    if (input.password === "error") {
+      return {
+        customerAccessToken: null,
+        customerUserErrors: [{ code: "UNAUTHORIZED_ACCESS", field: ["password"], message: "Incorrect password. Try another password!" }],
+      };
+    }
+    return {
+      customerAccessToken: {
+        accessToken: `mock-token-${input.email}`,
+        expiresAt: new Date(Date.now() + 86400 * 1000).toISOString(),
+      },
+      customerUserErrors: [],
+    };
+  }
+
+  return response?.body?.customerAccessTokenCreate || null;
+}
+
+export async function logoutCustomer(customerAccessToken: string) {
+  const response = await shopifyFetch<{ customerAccessTokenDelete: { deletedAccessToken: string, userErrors: any[] } }>({
+    query: CUSTOMER_ACCESS_TOKEN_DELETE_MUTATION,
+    variables: { customerAccessToken },
+    cache: "no-store",
+  });
+
+  if (!response) {
+    return {
+      deletedAccessToken: customerAccessToken,
+      userErrors: [],
+    };
+  }
+
+  return response?.body?.customerAccessTokenDelete || null;
+}
+
+export async function getCustomerProfile(customerAccessToken: string) {
+  const response = await shopifyFetch<{ customer: any }>({
+    query: GET_CUSTOMER_QUERY,
+    variables: { customerAccessToken },
+    cache: "no-store",
+  });
+
+  if (!response || !response.body?.customer) {
+    if (customerAccessToken.startsWith("mock-token-")) {
+      const email = customerAccessToken.replace("mock-token-", "");
+      return {
+        id: "gid://shopify/Customer/mock-customer-id",
+        firstName: "Mahesh",
+        lastName: "Dutt",
+        email: email,
+        phone: "+91 98765 43210",
+        defaultAddress: {
+          id: "gid://shopify/MailingAddress/mock-address",
+          address1: "Flat 4B, Sunflower Apartments",
+          address2: "12/1 Gariahat Road, Ballygunge",
+          city: "Kolkata",
+          province: "West Bengal",
+          zip: "700019",
+          country: "India",
+          phone: "+91 98765 43210",
+        },
+        orders: {
+          edges: [
+            {
+              node: {
+                id: "gid://shopify/Order/mock-order-1",
+                orderNumber: 94821,
+                processedAt: "2026-05-14T10:00:00Z",
+                financialStatus: "PAID",
+                fulfillmentStatus: "FULFILLED",
+                totalPrice: {
+                  amount: "3158.00",
+                  currencyCode: "INR"
+                },
+                lineItems: {
+                  edges: [
+                    {
+                      node: {
+                        title: "Girls Floral Layered Tulle Dress",
+                        quantity: 1,
+                        variant: {
+                          title: "Pink / 4Y",
+                          price: { amount: "1699.00" }
+                        }
+                      }
+                    },
+                    {
+                      node: {
+                        title: "Bow Tie Suspender Set",
+                        quantity: 1,
+                        variant: {
+                          title: "Navy Blue / M",
+                          price: { amount: "1459.00" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      };
+    }
+    return null;
+  }
+
+  return response?.body?.customer || null;
+}
+

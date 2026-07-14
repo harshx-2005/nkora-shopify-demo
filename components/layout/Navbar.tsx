@@ -7,10 +7,14 @@ import { Search, User, Heart, ShoppingBag, Menu, X, ChevronDown } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import SearchDrawer from "./SearchDrawer";
+import { useCustomer } from "@/context/CustomerContext";
+
 
 export default function Navbar() {
   const { openCart, totalQuantity } = useCart();
+  const { isLoggedIn, customer } = useCustomer();
   const pathname = usePathname();
+
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -203,8 +207,15 @@ export default function Navbar() {
               className="hidden sm:inline-block p-2 text-textDark hover:text-primary transition-colors duration-200"
               aria-label="Account"
             >
-              <User size={18} />
+              {isLoggedIn && customer ? (
+                <div className="w-5 h-5 rounded-full bg-softPink text-primary flex items-center justify-center font-bold text-[8px] border border-primary/20 shadow-xs hover:bg-primary hover:text-white transition-all duration-300">
+                  {`${customer.firstName?.[0] || ""}${customer.lastName?.[0] || ""}`.toUpperCase() || "C"}
+                </div>
+              ) : (
+                <User size={18} />
+              )}
             </Link>
+
 
             {/* Wishlist */}
             <Link
@@ -304,10 +315,16 @@ export default function Navbar() {
                   <Link
                     href="/account"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm tracking-widest font-semibold font-poppins py-2 border-b border-borderCustom/50 text-textDark"
+                    className="text-sm tracking-widest font-semibold font-poppins py-2 border-b border-borderCustom/50 text-textDark flex justify-between items-center"
                   >
-                    MY ACCOUNT
+                    <span>MY ACCOUNT</span>
+                    {isLoggedIn && customer && (
+                      <span className="text-[10px] bg-softPink text-primary px-2.5 py-0.5 rounded-full font-bold">
+                        {customer.firstName}
+                      </span>
+                    )}
                   </Link>
+
                 </nav>
               </div>
 
