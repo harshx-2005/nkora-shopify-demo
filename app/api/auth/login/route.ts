@@ -34,7 +34,8 @@ export async function GET(request: Request) {
 
     const shopId = "101063885166";
     const clientId = "377b775c-ee57-422d-8b0f-124080a5d2b0";
-    const scopes = "openid email customer-read-customers customer-read-orders";
+    const scopes = "openid email customer-account-api:full";
+
 
     // 3. Construct Shopify Customer Account API authorize endpoint URL
     const authUrl = `https://shopify.com/authentication/${shopId}/oauth/authorize?client_id=${clientId}&scope=${encodeURIComponent(
