@@ -40,11 +40,12 @@ export async function GET(request: Request) {
 
 
     // 3. Construct Shopify Customer Account API authorize endpoint URL
-    const authUrl = `https://shopify.com/authentication/${shopId}/oauth/authorize?client_id=${clientId}&scope=${encodeURIComponent(
+    const authUrl = `https://shopify.com/authentication/${shopId}/oauth/authorize?client_id=${clientId}&response_type=code&scope=${encodeURIComponent(
       scopes
     )}&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+
 
 
 
