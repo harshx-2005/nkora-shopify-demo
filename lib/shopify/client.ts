@@ -19,9 +19,10 @@ import {
 
 import { ShopifyProduct, ShopifyCollection, ShopifyCart } from "@/types/shopify";
 
-const domain = process.env.SHOPIFY_STORE_DOMAIN || "";
-const accessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN || "";
+const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN || process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
 const endpoint = `https://${domain}/api/2024-04/graphql.json`;
+
 
 // Real-world fallback mock products to match the premium design mockup images
 export const MOCK_PRODUCTS: ShopifyProduct[] = [
