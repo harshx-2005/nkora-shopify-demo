@@ -53,7 +53,7 @@ export default function CategoryGrid() {
           {categories.map((cat, idx) => (
             <motion.div
               key={cat.name}
-              className={`rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-500 flex flex-col justify-between ${cat.color}`}
+              className={`group rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between ${cat.color}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -79,11 +79,12 @@ export default function CategoryGrid() {
                   alt={cat.name}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover object-top hover:scale-108 transition-transform duration-700 ease-out"
+                  className="object-cover object-top group-hover:scale-108 transition-transform duration-700 ease-out"
                 />
               </div>
             </motion.div>
           ))}
+
         </div>
       </div>
     </section>
