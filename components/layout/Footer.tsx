@@ -89,6 +89,7 @@ export default function Footer() {
               <li key={link.name}>
                 <Link
                   href={link.href}
+                  prefetch={false}
                   className="text-xs text-textDark/70 hover:text-primary font-sans transition-colors"
                 >
                   {link.name}
@@ -108,6 +109,7 @@ export default function Footer() {
               <li key={link.name}>
                 <Link
                   href={link.href}
+                  prefetch={false}
                   className="text-xs text-textDark/70 hover:text-primary font-sans transition-colors"
                 >
                   {link.name}
@@ -116,6 +118,7 @@ export default function Footer() {
             ))}
           </ul>
         </div>
+
       </div>
 
       {/* Social and Copyright Row */}

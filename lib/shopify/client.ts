@@ -466,7 +466,7 @@ export async function shopifyFetch<T>({
     const body = await result.json();
 
     if (body.errors) {
-      console.error("Shopify Storefront GraphQL Errors:", body.errors);
+      console.warn("Shopify Storefront GraphQL Response Warnings:", body.errors);
       throw new Error("GraphQL fetch failed");
     }
 
@@ -475,9 +475,10 @@ export async function shopifyFetch<T>({
       body: body.data as T,
     };
   } catch (error) {
-    console.error("Failed to fetch from Shopify API. Details:", error);
+    console.warn("Failed to fetch from Shopify API (falling back to mockup data). Details:", error);
     return null;
   }
+
 }
 
 // SDK Functions
