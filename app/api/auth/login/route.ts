@@ -37,11 +37,12 @@ export async function GET(request: Request) {
     const scopes = "openid email customer-read-customers customer-read-orders";
 
     // 3. Construct Shopify Customer Account API authorize endpoint URL
-    const authUrl = `https://shopify.com/${shopId}/oauth/authorize?client_id=${clientId}&scope=${encodeURIComponent(
+    const authUrl = `https://shopify.com/authentication/${shopId}/oauth/authorize?client_id=${clientId}&scope=${encodeURIComponent(
       scopes
     )}&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+
 
 
     return NextResponse.redirect(authUrl);
