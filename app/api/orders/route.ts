@@ -6,12 +6,120 @@ export async function GET(request: NextRequest) {
   const orderNumber = searchParams.get("orderNumber");
   const identifier = searchParams.get("identifier"); // Email or Mobile
 
-  const db = getDB();
+  const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN;
 
   if (orderNumber && identifier) {
-    // Tracking query
     const cleanId = identifier.trim().toLowerCase();
-    const order = db.orders.find(o => 
+
+    // 1. Try to locate the order in Shopify Admin Draft Orders first (Stateless/Serverless support)
+    if (adminToken && storeDomain) {
+      try {
+        const queryUrl = `https://${storeDomain}/admin/api/2024-04/draft_orders.json?limit=20`;
+        const res = await fetch(queryUrl, {
+          headers: {
+            "X-Shopify-Access-Token": adminToken
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const matchingDraft = data.draft_orders?.find((draft: any) => {
+            const matchesTag = draft.tags && draft.tags.toUpperCase().includes(orderNumber.trim().toUpperCase());
+            const matchesNote = draft.note && draft.note.toUpperCase().includes(orderNumber.trim().toUpperCase());
+            const matchesName = draft.name && draft.name.toUpperCase() === orderNumber.trim().toUpperCase();
+
+            if (matchesTag || matchesNote || matchesName) {
+              const draftEmail = draft.customer?.email?.toLowerCase() || "";
+              const draftPhone = draft.customer?.phone?.replace(/\s+/g, "") || "";
+              const cleanIdentifier = cleanId.replace(/\s+/g, "");
+              return draftEmail === cleanId || draftPhone === cleanIdentifier || draftPhone.includes(cleanIdentifier) || cleanIdentifier.includes(draftPhone);
+            }
+            return false;
+          });
+
+          if (matchingDraft) {
+            let orderStatus = "Pending Payment";
+            if (matchingDraft.status === "open") {
+              orderStatus = "Payment Under Verification";
+            }
+
+            let courierPartner = "";
+            let trackingNumber = "";
+            let estimatedDelivery = "";
+
+            if (matchingDraft.completed_at) {
+              orderStatus = "Payment Verified";
+
+              if (matchingDraft.order_id) {
+                try {
+                  const orderRes = await fetch(`https://${storeDomain}/admin/api/2024-04/orders/${matchingDraft.order_id}.json`, {
+                    headers: { "X-Shopify-Access-Token": adminToken }
+                  });
+                  if (orderRes.ok) {
+                    const orderData = await orderRes.json();
+                    const shopifyOrder = orderData.order;
+
+                    if (shopifyOrder.fulfillment_status === "fulfilled") {
+                      orderStatus = "Delivered";
+                      const fulfillment = shopifyOrder.fulfillments?.[0];
+                      if (fulfillment) {
+                        courierPartner = fulfillment.tracking_company || "";
+                        trackingNumber = fulfillment.tracking_number || "";
+                        orderStatus = "In Transit";
+                      }
+                    } else if (shopifyOrder.financial_status === "paid") {
+                      orderStatus = "Preparing Order";
+                    }
+                  }
+                } catch (e) {
+                  console.error("Error fetching Shopify order details:", e);
+                }
+              }
+            }
+
+            const order: Order = {
+              id: String(matchingDraft.id),
+              orderNumber: orderNumber.trim(),
+              status: orderStatus as any,
+              customerName: matchingDraft.customer ? `${matchingDraft.customer.first_name} ${matchingDraft.customer.last_name || ""}`.trim() : "",
+              email: matchingDraft.customer?.email || "",
+              mobile: matchingDraft.customer?.phone || "",
+              address: matchingDraft.shipping_address?.address1 || "",
+              city: matchingDraft.shipping_address?.city || "",
+              state: matchingDraft.shipping_address?.province || "",
+              pincode: matchingDraft.shipping_address?.zip || "",
+              items: matchingDraft.line_items.map((li: any) => ({
+                title: li.title,
+                quantity: li.quantity,
+                price: parseFloat(li.price),
+                image: "",
+                variantTitle: li.variant_title || ""
+              })),
+              subtotal: parseFloat(matchingDraft.subtotal_price),
+              shipping: matchingDraft.shipping_line ? parseFloat(matchingDraft.shipping_line.price) : 0,
+              discount: parseFloat(matchingDraft.applied_discount?.amount || "0"),
+              total: parseFloat(matchingDraft.total_price),
+              createdAt: matchingDraft.created_at,
+              courierPartner,
+              trackingNumber,
+              estimatedDelivery,
+              statusHistory: [
+                { status: "Pending Payment", timestamp: matchingDraft.created_at }
+              ]
+            };
+
+            return NextResponse.json({ order });
+          }
+        }
+      } catch (err) {
+        console.error("Shopify search failed in GET /api/orders:", err);
+      }
+    }
+
+    // 2. Fallback to local file database
+    const db = getDB();
+    const order = db.orders.find(o =>
       o.orderNumber.toUpperCase() === orderNumber.trim().toUpperCase() &&
       (o.email.toLowerCase() === cleanId || o.mobile.replace(/\s+/g, "") === cleanId.replace(/\s+/g, ""))
     );
@@ -23,6 +131,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Otherwise, list all for dashboard
+  const db = getDB();
   return NextResponse.json({ orders: db.orders });
 }
 
@@ -115,7 +224,8 @@ export async function POST(request: NextRequest) {
               country: "India",
               ...(formattedPhone ? { phone: formattedPhone } : {})
             },
-            note: "Manual UPI Payment Order. UTR verification required."
+            note: "Manual UPI Payment Order. UTR verification required.",
+            tags: `manual-checkout, ${orderNumber}`
           }
         };
 
