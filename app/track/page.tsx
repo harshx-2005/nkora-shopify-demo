@@ -203,7 +203,7 @@ function TrackContent() {
                     <Calendar size={13} />
                     <span>Est. Delivery Date</span>
                   </div>
-                  <p className="font-bold text-primary">{order.estimatedDelivery || "Calculating timeline..."}</p>
+                  <p className="font-bold text-primary">{order.estimatedDelivery || "5 - 8 days"}</p>
                 </div>
               </div>
 
