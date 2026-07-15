@@ -1,7 +1,11 @@
 import fs from "fs";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "lib", "db.json");
+// Use writable /tmp folder on Vercel (production serverless) to bypass "Read-only file system" errors
+const isProd = process.env.NODE_ENV === "production" || !!process.env.VERCEL;
+const DB_PATH = isProd 
+  ? path.join("/tmp", "db.json") 
+  : path.join(process.cwd(), "lib", "db.json");
 
 export interface OrderItem {
   title: string;
