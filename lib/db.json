@@ -1,0 +1,343 @@
+{
+  "orders": [
+    {
+      "id": "ord_bn1lnd6am",
+      "orderNumber": "NK-1006",
+      "status": "Payment Under Verification",
+      "customerName": "Harsh Kshirsagar",
+      "email": "harshkshirsagar1289@gmail.com",
+      "mobile": "7058412735",
+      "address": "Pune",
+      "city": "Akluj",
+      "state": "Maharashtra",
+      "pincode": "413101",
+      "items": [
+        {
+          "title": "Knit Cardigan",
+          "quantity": 1,
+          "price": 499,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/Children_sCardiganKnittingPatternPDF_ColorBlockKidsSweaterTutorial_BeginnerFriendly.jpg?v=1784068351",
+          "variantTitle": "12-18M / Cream"
+        }
+      ],
+      "subtotal": 499,
+      "shipping": 99,
+      "discount": 0,
+      "total": 598,
+      "createdAt": "2026-07-15T18:46:50.557Z",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-15T18:46:50.557Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-15T18:47:08.354Z"
+        }
+      ],
+      "shopifyDraftOrderId": "1535467946350",
+      "shopifyDraftOrderName": "#D12",
+      "paymentDetails": {
+        "utr": "121212121215",
+        "transactionId": "",
+        "method": "UPI",
+        "senderName": "Harsh Kshirsagar",
+        "date": "",
+        "time": "",
+        "screenshotUrl": "",
+        "notes": "Testing app",
+        "submittedAt": "2026-07-15T18:47:08.354Z"
+      }
+    },
+    {
+      "id": "ord_r248o26kf",
+      "orderNumber": "NK-1005",
+      "status": "Payment Under Verification",
+      "customerName": "Harsh Kshirsagar",
+      "email": "harshkshirsagar1289@gmail.com",
+      "mobile": "7058412735",
+      "address": "Pune",
+      "city": "Akluj",
+      "state": "Maharashtra",
+      "pincode": "413101",
+      "items": [
+        {
+          "title": "Animal Print Onesie",
+          "quantity": 1,
+          "price": 399,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/730849845819025160.jpg?v=1784068440",
+          "variantTitle": "6-9M / Mint"
+        }
+      ],
+      "subtotal": 399,
+      "shipping": 99,
+      "discount": 0,
+      "total": 498,
+      "createdAt": "2026-07-15T18:34:28.487Z",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-15T18:34:28.487Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-15T18:34:47.596Z"
+        }
+      ],
+      "paymentDetails": {
+        "utr": "121212121211",
+        "transactionId": "",
+        "method": "UPI",
+        "senderName": "Harsh Kshirsagar",
+        "date": "",
+        "time": "",
+        "screenshotUrl": "",
+        "notes": "Testing 3",
+        "submittedAt": "2026-07-15T18:34:47.596Z"
+      }
+    },
+    {
+      "id": "ord_ppvjwvprr",
+      "orderNumber": "NK-1004",
+      "status": "Payment Under Verification",
+      "customerName": "Harsh Kshirsagar",
+      "email": "harshkshirsagar1289@gmail.com",
+      "mobile": "7058412735",
+      "address": "Pune",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "413101",
+      "items": [
+        {
+          "title": "Knit Cardigan",
+          "quantity": 1,
+          "price": 499,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/Children_sCardiganKnittingPatternPDF_ColorBlockKidsSweaterTutorial_BeginnerFriendly.jpg?v=1784068351",
+          "variantTitle": "12-18M / Cream"
+        }
+      ],
+      "subtotal": 499,
+      "shipping": 99,
+      "discount": 0,
+      "total": 598,
+      "createdAt": "2026-07-15T18:28:59.763Z",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-15T18:28:59.763Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-15T18:29:29.177Z"
+        }
+      ],
+      "paymentDetails": {
+        "utr": "121212121212",
+        "transactionId": "",
+        "method": "UPI",
+        "senderName": "Harsh Kshirsagar",
+        "date": "",
+        "time": "",
+        "screenshotUrl": "",
+        "notes": "Testing dashboard",
+        "submittedAt": "2026-07-15T18:29:29.177Z"
+      }
+    },
+    {
+      "id": "ord_vb8bz9g4p",
+      "orderNumber": "NK-1003",
+      "status": "Payment Under Verification",
+      "customerName": "Harsh Kshirsagar",
+      "email": "harshkshirsagar1289@gmail.com",
+      "mobile": "7058412735",
+      "address": "Pune",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "413101",
+      "items": [
+        {
+          "title": "Animal Print Onesie",
+          "quantity": 1,
+          "price": 399,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/730849845819025160.jpg?v=1784068440",
+          "variantTitle": "6-9M / Mint"
+        }
+      ],
+      "subtotal": 399,
+      "shipping": 99,
+      "discount": 0,
+      "total": 498,
+      "createdAt": "2026-07-15T15:54:49.584Z",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-15T15:54:49.584Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-15T16:56:24.312Z"
+        }
+      ],
+      "paymentDetails": {
+        "utr": "121212121212",
+        "transactionId": "",
+        "method": "UPI",
+        "senderName": "Harsh Kshirsagar",
+        "date": "",
+        "time": "",
+        "screenshotUrl": "",
+        "notes": "Testing",
+        "submittedAt": "2026-07-15T16:56:24.312Z"
+      }
+    },
+    {
+      "id": "ord_1",
+      "orderNumber": "NK-1051",
+      "status": "Payment Verified",
+      "customerName": "Priya Sharma",
+      "email": "priya.sharma@example.com",
+      "mobile": "9876543210",
+      "address": "Flat 4A, Orchid Towers, EM Bypass",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "pincode": "700105",
+      "items": [
+        {
+          "title": "Organic Cotton Bodysuit",
+          "quantity": 2,
+          "price": 899,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/OrganicBambooSummerPajamaSet-Clementine-2-3T_1.jpg?v=1784068556",
+          "variantTitle": "3Y / Peach"
+        }
+      ],
+      "subtotal": 1798,
+      "shipping": 150,
+      "discount": 90,
+      "total": 1858,
+      "createdAt": "2026-07-14T15:40:08.527Z",
+      "paymentDetails": {
+        "utr": "938201948201",
+        "transactionId": "TXN8492048204",
+        "method": "UPI",
+        "senderName": "Priya Sharma",
+        "date": "2026-07-14",
+        "time": "14:35",
+        "screenshotUrl": "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&q=80&w=400",
+        "notes": "Please pack it carefully as a gift.",
+        "submittedAt": "2026-07-14T16:10:08.527Z"
+      },
+      "internalNotes": "Verified amount matching exactly. Packed as gift.",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-14T15:40:08.527Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-14T16:10:08.527Z"
+        },
+        {
+          "status": "Payment Verified",
+          "timestamp": "2026-07-14T16:40:08.527Z"
+        }
+      ]
+    },
+    {
+      "id": "ord_2",
+      "orderNumber": "NK-1052",
+      "status": "In Transit",
+      "customerName": "Rahul Mehta",
+      "email": "rahul.mehta@example.com",
+      "mobile": "9830098300",
+      "address": "12/1, Park Street, Near Flurys",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "pincode": "700016",
+      "items": [
+        {
+          "title": "Sleep Romper",
+          "quantity": 1,
+          "price": 1299,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/Carter_sOshKoshBabyGirlOnesies_Pyjamas_Sleepwear.jpg?v=1784068493",
+          "variantTitle": "6M"
+        },
+        {
+          "title": "Knit Cardigan",
+          "quantity": 1,
+          "price": 1899,
+          "image": "https://cdn.shopify.com/s/files/1/1010/6388/5166/files/Children_sCardiganKnittingPatternPDF_ColorBlockKidsSweaterTutorial_BeginnerFriendly.jpg?v=1784068351",
+          "variantTitle": "2Y"
+        }
+      ],
+      "subtotal": 3198,
+      "shipping": 0,
+      "discount": 160,
+      "total": 3038,
+      "createdAt": "2026-07-13T15:40:08.527Z",
+      "paymentDetails": {
+        "utr": "123049284019",
+        "transactionId": "TXN102948201",
+        "method": "Bank Transfer",
+        "senderName": "Rahul Mehta",
+        "date": "2026-07-13",
+        "time": "10:15",
+        "screenshotUrl": "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&q=80&w=400",
+        "notes": "",
+        "submittedAt": "2026-07-13T16:10:08.527Z"
+      },
+      "courierPartner": "Delhivery",
+      "trackingNumber": "DEL1029384810",
+      "estimatedDelivery": "2026-07-17",
+      "statusHistory": [
+        {
+          "status": "Pending Payment",
+          "timestamp": "2026-07-13T15:40:08.527Z"
+        },
+        {
+          "status": "Payment Under Verification",
+          "timestamp": "2026-07-13T16:10:08.527Z"
+        },
+        {
+          "status": "Payment Verified",
+          "timestamp": "2026-07-13T16:40:08.527Z"
+        },
+        {
+          "status": "Preparing Order",
+          "timestamp": "2026-07-14T03:40:08.527Z"
+        },
+        {
+          "status": "Packed",
+          "timestamp": "2026-07-14T09:40:08.527Z"
+        },
+        {
+          "status": "Picked Up",
+          "timestamp": "2026-07-14T15:40:08.527Z"
+        },
+        {
+          "status": "In Transit",
+          "timestamp": "2026-07-14T19:40:08.527Z"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "qrCodeUrl": "/uploads/harsh-qr.jpg",
+    "upiId": "theharshkshirsagar-1@oksbi",
+    "accountName": "Harsh Kshirsagar",
+    "accountNumber": "923020054321098",
+    "ifscCode": "UTIB0000005",
+    "bankName": "Axis Bank",
+    "branch": "Kolkata Main Branch",
+    "supportNumber": "+91 9876543210",
+    "whatsappNumber": "+91 9876543210",
+    "couriers": [
+      "Blue Dart",
+      "Delhivery",
+      "DTDC",
+      "Xpressbees",
+      "Shadowfax"
+    ],
+    "shippingFee": 99,
+    "freeShippingThreshold": 1999
+  }
+}

@@ -98,10 +98,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
     // We can redirect immediately using checkoutUrl in useCart (which will be fetched in the background).
     // Or we can query the checkout route. For headless, redirecting to cart works, but we can also trigger redirect to shopify checkout URL
-    const savedCheckoutUrl = localStorage.getItem("nkora_checkout_url");
-    if (savedCheckoutUrl) {
-      window.location.href = savedCheckoutUrl;
-    }
+    window.location.href = "/checkout";
   };
 
   const handleWhatsApp = () => {

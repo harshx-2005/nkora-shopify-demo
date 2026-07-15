@@ -24,6 +24,7 @@ interface CartContextType {
   }) => Promise<void>;
   updateItemQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
+  clearCart: () => void;
   subtotal: number;
   totalQuantity: number;
 }
@@ -110,7 +111,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return {
         id: node.id,
         variantId: merchandise.id,
-        quantity: node.quantity,
+        quantity: node.quantity || 1,
         title: product.title,
         handle: product.handle,
         variantTitle: merchandise.title,
@@ -270,6 +271,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addItem,
         updateItemQuantity,
         removeItem,
+        clearCart,
         subtotal,
         totalQuantity,
       }}

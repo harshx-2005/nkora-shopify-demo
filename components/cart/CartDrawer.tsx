@@ -29,11 +29,8 @@ export default function CartDrawer() {
   const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - subtotal;
 
   const handleCheckout = () => {
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl;
-    } else {
-      alert("Checkout is currently syncing. Please try again in a moment.");
-    }
+    closeCart();
+    window.location.href = "/checkout";
   };
 
   const applyCoupon = (e: React.FormEvent) => {
@@ -61,9 +58,10 @@ export default function CartDrawer() {
           />
 
           {/* Drawer Wrapper */}
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+          <div className="absolute inset-y-0 right-0 max-w-full flex sm:pl-10 pl-0">
             <motion.div
-              className="w-screen max-w-md bg-white flex flex-col shadow-2xl relative"
+              className="w-screen sm:max-w-md max-w-full bg-white flex flex-col shadow-2xl relative"
+
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
