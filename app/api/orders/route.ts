@@ -159,9 +159,9 @@ export async function POST(request: NextRequest) {
 
     const db = getDB();
     
-    // Generate order number like NK-1053
-    const nextNum = 1000 + db.orders.length + 1;
-    const orderNumber = `NK-${nextNum}`;
+    // Generate a unique randomized order number to prevent duplicates in stateless serverless environments
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `NK-${randomNum}`;
 
     const isCod = paymentMethod === "COD";
     const initialStatus = isCod ? "Preparing Order" : "Pending Payment";
