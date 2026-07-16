@@ -149,7 +149,8 @@ export async function POST(request: NextRequest) {
       subtotal, 
       shipping, 
       discount, 
-      total 
+      total,
+      paymentMethod = "MANUAL"
     } = await request.json();
 
     if (!customerName || !email || !mobile || !address || !items || items.length === 0) {
@@ -162,10 +163,13 @@ export async function POST(request: NextRequest) {
     const nextNum = 1000 + db.orders.length + 1;
     const orderNumber = `NK-${nextNum}`;
 
+    const isCod = paymentMethod === "COD";
+    const initialStatus = isCod ? "Preparing Order" : "Pending Payment";
+
     const newOrder: Order = {
       id: `ord_${Math.random().toString(36).substr(2, 9)}`,
       orderNumber,
-      status: "Pending Payment",
+      status: initialStatus,
       customerName,
       email,
       mobile,
@@ -178,9 +182,10 @@ export async function POST(request: NextRequest) {
       shipping,
       discount,
       total,
+      paymentMethod,
       createdAt: new Date().toISOString(),
       statusHistory: [
-        { status: "Pending Payment", timestamp: new Date().toISOString() }
+        { status: initialStatus, timestamp: new Date().toISOString() }
       ]
     };
 
@@ -224,8 +229,8 @@ export async function POST(request: NextRequest) {
               country: "India",
               ...(formattedPhone ? { phone: formattedPhone } : {})
             },
-            note: "Manual UPI Payment Order. UTR verification required.",
-            tags: `manual-checkout, ${orderNumber}`
+            note: isCod ? "Cash on Delivery (COD) Order. Pay on delivery." : "Manual UPI Payment Order. UTR verification required.",
+            tags: isCod ? `manual-checkout, COD, ${orderNumber}` : `manual-checkout, ${orderNumber}`
           }
         };
 
@@ -241,8 +246,32 @@ export async function POST(request: NextRequest) {
         if (shopifyRes.ok) {
           const shopifyData = await shopifyRes.json();
           if (shopifyData.draft_order) {
-            newOrder.shopifyDraftOrderId = String(shopifyData.draft_order.id);
+            const draftId = shopifyData.draft_order.id;
+            newOrder.shopifyDraftOrderId = String(draftId);
             newOrder.shopifyDraftOrderName = String(shopifyData.draft_order.name);
+
+            // If COD, complete the draft order immediately as pending payment (unpaid)
+            if (isCod) {
+              try {
+                const completeRes = await fetch(`https://${storeDomain}/admin/api/2024-04/draft_orders/${draftId}/complete.json?payment_pending=true`, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Shopify-Access-Token": adminToken
+                  }
+                });
+                if (completeRes.ok) {
+                  const completeData = await completeRes.json();
+                  if (completeData.draft_order && completeData.draft_order.order_id) {
+                    newOrder.shopifyOrderId = String(completeData.draft_order.order_id);
+                  }
+                } else {
+                  console.error("Failed to complete COD draft order:", await completeRes.text());
+                }
+              } catch (completeErr) {
+                console.error("Error completing COD draft order:", completeErr);
+              }
+            }
           }
         } else {
           console.error("Shopify Admin API Draft Order creation failed:", await shopifyRes.text());

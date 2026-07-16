@@ -52,7 +52,12 @@ function PaymentContent() {
         }
       })
       .catch(err => console.error("Failed to load settings:", err));
-  }, []);
+
+    const methodParam = searchParams.get("method");
+    if (methodParam === "COD") {
+      setIsSuccess(true);
+    }
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -425,10 +430,18 @@ function PaymentContent() {
             
             <div className="space-y-2">
               <h2 className="text-xl font-bold uppercase tracking-wider text-textDark">
-                Verification Details Submitted
+                {searchParams.get("method") === "COD" ? "Order Placed Successfully!" : "Verification Details Submitted"}
               </h2>
               <p className="text-xs text-textDark/60 font-sans max-w-md mx-auto leading-relaxed">
-                Thank you! Your transaction details for order <span className="font-bold text-textDark">{form.orderNumber}</span> have been submitted to our verification desk. We will review it shortly.
+                {searchParams.get("method") === "COD" ? (
+                  <>
+                    Thank you! Your Cash on Delivery order <span className="font-bold text-textDark">{form.orderNumber}</span> has been confirmed and synced to Shopify. We are preparing it for shipment.
+                  </>
+                ) : (
+                  <>
+                    Thank you! Your transaction details for order <span className="font-bold text-textDark">{form.orderNumber}</span> have been submitted to our verification desk. We will review it shortly.
+                  </>
+                )}
               </p>
             </div>
 
@@ -437,24 +450,32 @@ function PaymentContent() {
               <h4 className="font-bold text-textDark uppercase tracking-wider text-[10px]">
                 What happens next?
               </h4>
-              <ul className="space-y-2 text-textDark/70 leading-relaxed list-disc list-inside">
-                <li>Our desk cross-references the UTR / Ref ID with our bank entries.</li>
-                <li>Once verified, you will receive a confirmation message.</li>
-                <li>You can track the fulfillment timeline in real-time.</li>
-              </ul>
+              {searchParams.get("method") === "COD" ? (
+                <ul className="space-y-2 text-textDark/70 leading-relaxed list-disc list-inside">
+                  <li>We package and dispatch your items from our warehouse.</li>
+                  <li>Delivery partner will deliver the parcel to your doorstep in 5 - 8 days.</li>
+                  <li>Pay with cash or digital UPI to the courier agent upon arrival.</li>
+                </ul>
+              ) : (
+                <ul className="space-y-2 text-textDark/70 leading-relaxed list-disc list-inside">
+                  <li>Our desk cross-references the UTR / Ref ID with our bank entries.</li>
+                  <li>Once verified, you will receive a confirmation message.</li>
+                  <li>You can track the fulfillment timeline in real-time.</li>
+                </ul>
+              )}
             </div>
 
             {/* Action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
-                href={`/track?orderNumber=${encodeURIComponent(form.orderNumber)}`}
+                href={`/track?orderNumber=${encodeURIComponent(form.orderNumber)}&identifier=${encodeURIComponent(form.mobileNumber)}`}
                 className="bg-primary hover:bg-primary-hover text-white text-xs tracking-widest font-bold uppercase py-3.5 px-6 rounded-2xl transition-all"
               >
                 Track Order Status
               </Link>
               
               <a
-                href={`https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20NKORA%2C%20I%20have%20submitted%20my%20payment%20verification%20screenshot%20for%20order%20${form.orderNumber}`}
+                href={`https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20NKORA%2C%20I%20have%20placed%20a%20Cash%20on%20Delivery%20order%20${form.orderNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border border-borderCustom hover:bg-lightGray/40 text-textDark text-xs tracking-widest font-bold uppercase py-3.5 px-6 rounded-2xl transition-all flex items-center justify-center space-x-2"

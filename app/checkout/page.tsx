@@ -29,6 +29,7 @@ export default function CheckoutPage() {
   });
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"MANUAL" | "COD">("MANUAL");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStep, setSubmissionStep] = useState(0); // 0: Idle, 1: Syncing, 2: Creating, 3: Completed
   const [error, setError] = useState("");
@@ -151,7 +152,8 @@ export default function CheckoutPage() {
           subtotal,
           shipping: shippingCharge,
           discount: discountAmount,
-          total: estimatedTotal
+          total: estimatedTotal,
+          paymentMethod
         })
       });
 
@@ -166,7 +168,8 @@ export default function CheckoutPage() {
       // Clear headless client cart local storage and context
       clearCart();
 
-      window.location.href = `/payment?orderNumber=${encodeURIComponent(data.order.orderNumber)}&amount=${encodeURIComponent(estimatedTotal.toString())}&mobile=${encodeURIComponent(formData.mobile)}&name=${encodeURIComponent(formData.name)}`;
+      const redirectMethod = paymentMethod === "COD" ? "&method=COD" : "";
+      window.location.href = `/payment?orderNumber=${encodeURIComponent(data.order.orderNumber)}&amount=${encodeURIComponent(estimatedTotal.toString())}&mobile=${encodeURIComponent(formData.mobile)}&name=${encodeURIComponent(formData.name)}${redirectMethod}`;
     } catch (err: any) {
       console.error(err);
       setError("Something went wrong while booking the order. Please try again.");
@@ -364,16 +367,58 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="bg-[#FAF5F0] border border-primary/10 rounded-2xl p-4 mt-6">
-                <div className="flex items-start space-x-3">
-                  <CreditCard className="text-primary mt-0.5 flex-shrink-0" size={16} />
-                  <div>
-                    <h4 className="text-xs font-bold uppercase text-textDark">
-                      Manual Payment Mode
-                    </h4>
-                    <p className="text-[11px] text-textDark/60 font-sans leading-relaxed mt-0.5">
-                      Pay manually via UPI or Direct Bank Transfer on the next screen. Upload your transaction screenshot to book shipping.
-                    </p>
+              <div className="space-y-3.5 mt-6">
+                <label className="text-[10px] uppercase font-bold text-textDark/60 tracking-wider">
+                  Select Payment Method *
+                </label>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Option 1: Manual */}
+                  <div 
+                    onClick={() => setPaymentMethod("MANUAL")}
+                    className={`border rounded-2xl p-4 cursor-pointer transition-all duration-300 flex items-start space-x-3 ${
+                      paymentMethod === "MANUAL" 
+                        ? "border-primary bg-[#FAF5F0]" 
+                        : "border-borderCustom bg-white hover:bg-lightGray/10"
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                      paymentMethod === "MANUAL" ? "border-primary bg-primary text-white" : "border-textDark/30"
+                    }`}>
+                      {paymentMethod === "MANUAL" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xs font-bold uppercase text-textDark">
+                        UPI / Bank Transfer
+                      </h4>
+                      <p className="text-[10px] text-textDark/60 font-sans mt-0.5 leading-relaxed">
+                        Pay manually via UPI QR or Bank account transfer on the next screen.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Option 2: COD */}
+                  <div 
+                    onClick={() => setPaymentMethod("COD")}
+                    className={`border rounded-2xl p-4 cursor-pointer transition-all duration-300 flex items-start space-x-3 ${
+                      paymentMethod === "COD" 
+                        ? "border-primary bg-[#F0F5FA]" 
+                        : "border-borderCustom bg-white hover:bg-lightGray/10"
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 ${
+                      paymentMethod === "COD" ? "border-primary bg-primary text-white" : "border-textDark/30"
+                    }`}>
+                      {paymentMethod === "COD" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xs font-bold uppercase text-textDark">
+                        Cash on Delivery (COD)
+                      </h4>
+                      <p className="text-[10px] text-textDark/60 font-sans mt-0.5 leading-relaxed">
+                        Pay with cash upon delivery. COD is active for your pincode.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

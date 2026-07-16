@@ -65,6 +65,8 @@ export interface Order {
   statusHistory?: { status: string; timestamp: string }[];
   shopifyDraftOrderId?: string;
   shopifyDraftOrderName?: string;
+  paymentMethod?: string;
+  shopifyOrderId?: string;
 }
 
 export interface AdminSettings {
